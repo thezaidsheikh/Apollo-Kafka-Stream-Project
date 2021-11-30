@@ -5,7 +5,7 @@ const ObjectId = require("mongodb").ObjectId;
 const fs = require("fs");
 const helper = require("../helper");
 const { join } = require("path");
-
+var file_header = Object.keys(constant.SOURCE_DATA);
 // Global object to use for time source.
 var global_obj = {
   isSourceLogCreated: false,
@@ -40,9 +40,9 @@ const getTimeFile = async () => {
       let new_file_reading = join(process.cwd(), "../log_time_data_reading.txt");
       fs.renameSync(file_path, new_file_reading);
       file_path = new_file_reading;
-      let file_header = null;
+      let header = null;
       global_obj.line_number = 0;
-      const fileStatus = await readTimeFile(file_path, file_header);
+      const fileStatus = await readTimeFile(file_path, header);
     }
     // callback(200, { status: 200, message: "File readed successfully" });
   } catch (error) {
@@ -56,7 +56,7 @@ const getTimeFile = async () => {
 };
 
 // Read a file to perform task.
-const readTimeFile = async (file_path, file_header) => {
+const readTimeFile = async (file_path, header) => {
   return new Promise((resolve, reject) => {
     let lr = new LineByLineReader(file_path, { skipEmptyLines: true });
     let all_records = [];
@@ -64,8 +64,10 @@ const readTimeFile = async (file_path, file_header) => {
     lr.on("line", async function (line) {
       lr.pause();
       global_obj.line_number++;
+      
       // Converting first row of file to headers
-      if (!file_header) {
+      if (!header && file_header.includes(line.split("\t")[0])) {
+        header = line.split("\t");
         file_header = line.split("\t");
         createSourceParam("time", file_header);
       } else {

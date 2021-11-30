@@ -23,6 +23,6 @@ const startInterval = server.listen(port, (error) => {
   console.log(`server is listening on ${port}`);
   setInterval(() => {
     sourceController.getTimeFile();
-  }, 1000);
+  }, 2000);
   sourceController.createDepthFile();
 });
