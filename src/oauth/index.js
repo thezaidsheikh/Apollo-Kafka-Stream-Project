@@ -22,7 +22,7 @@ model.getClient = function (clientId, clientSecret, callback) {
     );
   }
   db["client"]
-    .findOne({where})
+    .findOne({ where })
     .then((client) => {
       console.log("client found in get client ==>", client);
       if (!client) {
@@ -67,7 +67,7 @@ model.getUser = function (username, password, callback) {
       console.log("error in get user ===>", error);
       callback(error);
     });
-  };
+};
 
 // Used to save the generated token in db.
 model.saveToken = async function (token, clientId, user, callback) {
@@ -82,19 +82,19 @@ model.saveToken = async function (token, clientId, user, callback) {
   );
   let userId = user.id;
   let accessToken = await db["access_token"].findOne({
-user_id: user.id
+    user_id: user.id,
   });
   let refreshToken = await db["refresh_token"].findOne({
-    user_id: user.id
+    user_id: user.id,
   });
   if (accessToken) {
     await db["access_token"].deleteOne({
-      id: accessToken.id
+      id: accessToken.id,
     });
   }
   if (refreshToken) {
     await db["refresh_token"].deleteOne({
-      id: refreshToken.id
+      id: refreshToken.id,
     });
   }
   Promise.all([
@@ -121,7 +121,7 @@ user_id: user.id
             isLogin: true,
             token: token.accessToken,
             token_expiry: token.accessTokenExpiresAt,
-          },
+          }
         )
         .then((userLoginUpdate) => {
           console.log("User updated........", userLoginUpdate);
@@ -173,7 +173,7 @@ model.getAccessToken = async function (accessToken, callback) {
   try {
     console.log("in getAccessToken (bearerToken: " + accessToken + ")");
     let checkToken = await db["access_token"].findOne({
-      token: accessToken
+      token: accessToken,
     });
     if (checkToken) {
       callback(null, {
@@ -223,14 +223,10 @@ model.saveRefreshToken = function (token, clientId, expires, user, callback) {
 
 model.getRefreshToken = function (refreshToken, callback) {
   console.log("in getRefreshToken (refreshToken: " + refreshToken + ")");
-  
 };
 
 model.revokeRefreshToken = function (refreshToken, callback) {
   console.log("in revoke token" + refreshToken);
-  
 };
 
-comparePassword = function (candidatePassword, password, cb) {
- 
-};
+comparePassword = function (candidatePassword, password, cb) {};

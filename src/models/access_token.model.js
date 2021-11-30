@@ -1,6 +1,6 @@
 "use strict";
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const access_token = new Schema({
@@ -12,12 +12,12 @@ const access_token = new Schema({
   },
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user'
+    ref: "user",
   },
   client_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'client'
-  }
+    ref: "client",
+  },
 });
 
-module.exports = mongoose.model('access_token', access_token);
+module.exports = mongoose.model("access_token", access_token);

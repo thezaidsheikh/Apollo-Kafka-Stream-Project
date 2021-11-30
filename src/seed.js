@@ -20,18 +20,16 @@ module.exports = (function () {
           .then(console.log)
           .catch(console.log);
       }
-      db["client"]
-        .findOne({ clientId: "APPOLOCLIENT" })
-        .then((client) => {
-          if (!client) {
-            Promise.all([
-              db["client"].create({
-                clientId: "APPOLOCLIENT",
-                clientSecret: "APPOLO123",
-              }),
-            ]);
-          }
-        });
+      db["client"].findOne({ clientId: "APPOLOCLIENT" }).then((client) => {
+        if (!client) {
+          Promise.all([
+            db["client"].create({
+              clientId: "APPOLOCLIENT",
+              clientSecret: "APPOLO123",
+            }),
+          ]);
+        }
+      });
     })
     .catch(console.log);
 })();
