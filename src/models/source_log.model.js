@@ -43,6 +43,15 @@ const source_log = new Schema({
   status: {
     type: String,
   },
+  count: {
+    type: Number,
+  },
+  mode: {
+    type: String,
+  },
+  well_name: {
+    type: String,
+  },
   stdMnemonicsData: [{}],
 });
 

@@ -22,6 +22,9 @@ const source_time_data = new Schema({
   year: {
     type: String,
   },
+  id: {
+    type: Number,
+  },
 });
 
 module.exports = mongoose.model("source_time_data", source_time_data);
