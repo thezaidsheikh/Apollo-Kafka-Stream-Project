@@ -1,18 +1,31 @@
 const { Kafka } = require("kafkajs");
 const kafka = new Kafka({
-  clientId: "my-producer",
-  brokers: ["localhost:9092"],
+  brokers: ["https://10.10.30.102:9092?username=root&password=Temp$8282"],
 });
 const producer = kafka.producer();
 
-const run = async () => {
+const run = async (type,record) => {
   // Producing
   console.log("running kafka =============+>");
   await producer.connect();
-  await producer.send({
-    topic: "test-topic",
-    messages: [{ value: "Hello KafkaJS user!" }],
-  });
+  switch (type) {
+    case "time":
+      await producer.send({
+        topic: "13220-13220-d_time",
+        messages: [{ value: record }],
+      });
+      break;
+    case "depth":
+      await producer.send({
+        topic: "13220-13220-d_depth",
+        messages: [{ value: record }],
+      });
+      break;
+    default:
+      break;
+  }
 };
 
-run().catch(console.error);
+module.exports = {
+  run:run
+}

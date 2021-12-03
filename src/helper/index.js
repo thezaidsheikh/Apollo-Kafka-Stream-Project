@@ -103,6 +103,7 @@ const creatingSourceLogData = (record, file_header) => {
     sourceLogObj.start_depth = record.DMEA;
     sourceLogObj.end_depth = record.DMEA;
     sourceLogObj.log = record.log;
+    sourceLogObj.count = record.count;
     sourceLogObj.laststatusupdate = new Date().toISOString();
     sourceLogObj.log_data = record.log_data;
     sourceLogObj.stdMnemonicsData = file_header.map((header) => {

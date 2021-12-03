@@ -5,6 +5,7 @@ const ObjectId = require("mongodb").ObjectId;
 const fs = require("fs");
 const helper = require("../helper");
 const { join } = require("path");
+const producer = require("../helper/producer");
 
 // Global object to use for depth source.
 var depth_global_obj = {
@@ -120,7 +121,8 @@ const insertData = async (data, file_exists, file_path) => {
   // data = data + "\t" + depth_obj["TQX"];
 
   fs.appendFileSync(file_path, data);
-  const count = await db["source_time"].countDocuments({});
+  producer.run('depth',data);
+  const count = await db["source_depth"].countDocuments({});
   saveSourceDepthData(count, depth_obj);
   createSourceParam(constant.SOURCE_PARAMETER);
   createDepthSourceLog(count, depth_obj);
@@ -130,9 +132,9 @@ const insertData = async (data, file_exists, file_path) => {
 const saveSourceDepthData = (count, depth_obj) => {
   try {
     let source_depth_data = {};
-    source_depth_data.depth = count;
+    source_depth_data.depth = count + 1;
     // source_depth_data.depth = depth_global_obj.depth_number;
-    source_depth_data.id = count;
+    source_depth_data.id = count + 1;
     // source_depth_data.id = depth_global_obj.depth_number;
     source_depth_data.sourceid = depth_global_obj.sourceid;
     source_depth_data.sourcedata = depth_obj;
@@ -150,7 +152,7 @@ const createDepthSourceLog = (count, depth_obj) => {
       depth_obj.SOURCEID = depth_global_obj.sourceid;
       depth_obj.log_data = "source_depth_data";
       depth_obj.log = "depth";
-      depth_obj.count = 0;
+      depth_obj.count = count + 1;
       const source_log_obj = await helper.creatingSourceLogData(
         depth_obj,
         constant.SOURCE_PARAMETER
@@ -166,7 +168,7 @@ const createDepthSourceLog = (count, depth_obj) => {
         end_time: depth_obj.TIMESTAMP,
         end_depth: depth_obj.DMEA,
         laststatusupdate: depth_obj.TIMESTAMP,
-        count: count,
+        count: count + 1,
       };
       const source_log_update = await db["source_log"].updateOne(
         { _id: depth_global_obj.source_log_id },

@@ -5,6 +5,7 @@ const ObjectId = require("mongodb").ObjectId;
 const fs = require("fs");
 const helper = require("../helper");
 const { join } = require("path");
+const producer = require("../helper/producer");
 
 // Global object to use for time source.
 var time_global_obj = {
@@ -99,6 +100,7 @@ const insertData = async (data, file_exists, file_path) => {
     data = data + time_obj[key];
   }
   fs.appendFileSync(file_path, data);
+  producer.run('time',data);
   const count = await db["source_time"].countDocuments({});
   saveSourceTimeData(count, time_obj);
   createSourceParam(constant.SOURCE_PARAMETER);
@@ -131,7 +133,7 @@ const createTimeSourceLog = (count, time_obj) => {
       time_obj.SOURCEID = time_global_obj.sourceid;
       time_obj.log_data = "source_time_data";
       time_obj.log = "time";
-      time_obj.count = 0;
+      time_obj.count = count + 1;
       const source_log_obj = await helper.creatingSourceLogData(
         time_obj,
         constant.SOURCE_PARAMETER
@@ -147,7 +149,7 @@ const createTimeSourceLog = (count, time_obj) => {
         end_time: time_obj.TIMESTAMP,
         end_depth: time_obj.DMEA,
         laststatusupdate: time_obj.TIMESTAMP,
-        count: count,
+        count: count + 1,
       };
       const source_log_update = await db["source_log"].updateOne(
         { _id: time_global_obj.source_log_id },
