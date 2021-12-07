@@ -1,6 +1,6 @@
-const { Kafka } = require("kafkajs");
+const { Kafka,logLevel } = require("kafkajs");
 const kafka = new Kafka({
-  brokers: ["https://10.10.30.102:9092?username=root&password=Temp$8282"],
+  brokers: ["10.10.30.102:9092"],
 });
 const producer = kafka.producer();
 
