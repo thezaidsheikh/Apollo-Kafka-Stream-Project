@@ -25,6 +25,7 @@ const initializeTime = async () => {
   try {
     let file_path = join(process.cwd(), "../log_time_data.txt");
     let file_exists = fs.existsSync(file_path);
+    writeTimeTxt(file_path, file_exists);
     setInterval(() => {
       writeTimeTxt(file_path, file_exists);
     }, 1000);
@@ -100,7 +101,7 @@ const insertData = async (data, file_exists, file_path) => {
     data = data + time_obj[key];
   }
   fs.appendFileSync(file_path, data);
-  producer.run('time',data);
+  producer.run("time", data);
   const count = await db["source_time"].countDocuments({});
   saveSourceTimeData(count, time_obj);
   createSourceParam(constant.SOURCE_PARAMETER);
@@ -172,8 +173,9 @@ const createSourceParam = (file_header) => {
       parameter_obj.std_mnemonic = constant.STD_MNEMONIC[element]
         ? constant.STD_MNEMONIC[element]
         : null;
-      parameter_obj.std_mnemonic_displayname = constant.STD_MNEMONIC[element]
-        ? constant.STD_MNEMONIC[element]
+      parameter_obj.std_mnemonic_displayname = constant
+        .STD_MNEMONIC_DISPLAYNAME[element]
+        ? constant.STD_MNEMONIC_DISPLAYNAME[element]
         : null;
       parameter_obj.unit = constant.UNIT[element]
         ? constant.UNIT[element]

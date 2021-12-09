@@ -7,6 +7,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const depthController = require("./controller/depth.controller");
 const timeController = require("./controller/time.controller");
+const secController = require("./controller/sec.controller");
 dotenv.config();
 
 let server = require("http").createServer(app);
@@ -22,4 +23,5 @@ const startInterval = server.listen(port, (error) => {
   console.log(`server is listening on ${port}`);
   depthController.initializeDepth();
   timeController.initializeTime();
+  secController.initializeSecTime();
 });

@@ -52,6 +52,9 @@ const source_log = new Schema({
   well_name: {
     type: String,
   },
+  WellTimeZone:{
+    type: String,
+  },
   stdMnemonicsData: [{}],
 });
 

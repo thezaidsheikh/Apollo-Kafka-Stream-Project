@@ -5,64 +5,64 @@ const ObjectId = require("mongodb").ObjectId;
 const fs = require("fs");
 const helper = require("../helper");
 const { join } = require("path");
-const producer = require("../helper/producer");
 
-// Global object to use for depth source.
-var depth_global_obj = {
+// Global object to use for time source.
+var sec_time_global_obj = {
   isSourceLogCreated: false,
   isParameterCreated: false,
   source_log_id: null,
-  complete_depth: false,
-  depth_index: 0.0,
-  depth_number: 1,
+  complete_time: false,
+  sec_time_index: 0.0,
+  sec_time_number: 1,
   sourceid: ObjectId().toString(),
 };
-/* ****************************************************** Depth file *********************************************** */
 
-// Initializing depth program.
-const initializeDepth = async () => {
+/* ****************************************************** Time file *********************************************** */
+
+// Initializing time program.
+const initializeSecTime = async () => {
   try {
-    let file_path = join(process.cwd(), "../log_depth_data.txt");
+    let file_path = join(process.cwd(), "../log_sec_time_data.txt");
     let file_exists = fs.existsSync(file_path);
-    writeDepthTxt(file_path, file_exists);
+    writeSecTimeTxt(file_path, file_exists);
     setInterval(() => {
-      writeDepthTxt(file_path, file_exists);
-    }, 60000);
+      writeSecTimeTxt(file_path, file_exists);
+    }, 10000);
   } catch (error) {
     console.log("error in creating a file ====================>", error);
   }
 };
 
 // Program that will continously run
-const writeDepthTxt = async (file_path, file_exists) => {
+const writeSecTimeTxt = async (file_path, file_exists) => {
   return new Promise((resolve, reject) => {
-    console.time("writeDepthStarted");
-    if (depth_global_obj.complete_depth) {
-      depth_global_obj.depth_index = 1e-2;
-      depth_global_obj.complete_depth = false;
+    console.time("writeSecTimeStarted");
+    if (sec_time_global_obj.complete_time) {
+      sec_time_global_obj.sec_time_index = 1e-2;
+      sec_time_global_obj.complete_time = false;
     }
-    if (depth_global_obj.depth_index <= 26e3) {
+    if (sec_time_global_obj.sec_time_index <= 26e3) {
       insertData(
-        depth_global_obj.depth_index.toFixed(2),
+        sec_time_global_obj.sec_time_index.toFixed(2),
         file_exists,
         file_path
       );
-      depth_global_obj.depth_index = Number(
-        (depth_global_obj.depth_index + 1e-2).toFixed(2)
+      sec_time_global_obj.sec_time_index = Number(
+        (sec_time_global_obj.sec_time_index + 1e-2).toFixed(2)
       );
       file_exists = fs.existsSync(file_path);
     } else {
-      depth_global_obj.complete_depth = true;
+      sec_time_global_obj.complete_time = true;
     }
-    console.timeEnd("writeDepthStarted");
+    console.timeEnd("writeSecTimeStarted");
   });
 };
 
-// Inserting data in depth file
+// Inserting data in second time file
 const insertData = async (data, file_exists, file_path) => {
   file_exists = fs.existsSync(file_path);
-  let depth_obj = {
-    DMEA: `${data}`,
+  let sec_time_obj = {
+    TIMESTAMP: new Date().toISOString(),
     Well124: constant.DEPTH_DATA["Well124"],
     AZIMUTH: helper.getRandomNumber("AZIMUTH", 22, 338),
     BITWISE: helper.getRandomNumber("BITWISE", 12.25, 23.5),
@@ -87,7 +87,7 @@ const insertData = async (data, file_exists, file_path) => {
     SPM: helper.getRandomNumber("SPM", 0, 1000),
     SPP: helper.getRandomNumber("SPP", 300, 3000),
     TFLO: helper.getRandomNumber("TFLO", 500, 3600),
-    TIMESTAMP: new Date().toISOString(),
+    DMEA: `${data}`,
     TQA: helper.getRandomNumber("TQA", 0.5, 25.0),
     TVA: helper.getRandomNumber("TVA", 0, 1000),
     TVD: helper.getRandomNumber("TVD", 2800, 3500),
@@ -97,65 +97,65 @@ const insertData = async (data, file_exists, file_path) => {
   if (file_exists) {
     data = `\r\n`;
   }
-  for (const key in depth_obj) {
-    if (key != "DMEA") {
+  for (const key in sec_time_obj) {
+    if (key != "TIMESTAMP") {
       data = data + "\t";
     }
-    data = data + depth_obj[key];
+    data = data + sec_time_obj[key];
   }
-
   fs.appendFileSync(file_path, data);
-  producer.run("depth", data);
-  const count = await db["source_depth"].countDocuments({});
-  saveSourceDepthData(count, depth_obj);
+  const count = await db["source_sec"].countDocuments({});
+  saveSourceSecTimeData(count, sec_time_obj);
   createSourceParam(constant.SOURCE_PARAMETER);
-  createDepthSourceLog(count, depth_obj);
+  createSecTimeSourceLog(count, sec_time_obj);
 };
 
-// Creating source_depth in DB.
-const saveSourceDepthData = (count, depth_obj) => {
+// Creating source_sec_time in DB.
+const saveSourceSecTimeData = (count, sec_time_obj) => {
   try {
-    let source_depth_data = {};
-    source_depth_data.depth = count + 1;
-    // source_depth_data.depth = depth_global_obj.depth_number;
-    source_depth_data.id = count + 1;
-    // source_depth_data.id = depth_global_obj.depth_number;
-    source_depth_data.sourceid = depth_global_obj.sourceid;
-    source_depth_data.sourcedata = depth_obj;
-    db["source_depth"].create(source_depth_data);
-    // depth_global_obj.depth_number++;
+    let source_time_data = {};
+    source_time_data.time = sec_time_obj.TIMESTAMP;
+    source_time_data.day = new Date(sec_time_obj.TIMESTAMP).getDate();
+    source_time_data.month = new Date(sec_time_obj.TIMESTAMP).getMonth() + 1;
+    source_time_data.year = new Date(sec_time_obj.TIMESTAMP).getFullYear();
+    source_time_data.id = count + 1;
+    // source_time_data.id = sec_time_global_obj.sec_time_number;
+    source_time_data.sourceid = sec_time_global_obj.sourceid;
+    source_time_data.sourcedata = sec_time_obj;
+    db["source_sec"].create(source_time_data);
+    // sec_time_global_obj.sec_time_number++;
   } catch (error) {
-    console.log("error in saving the source depth ========>", error);
+    console.log("error in saving the source time ========>", error);
   }
 };
 
-// Creating source_log for depth.
-const createDepthSourceLog = (count, depth_obj) => {
+// Creating source_log for time.
+const createSecTimeSourceLog = (count, sec_time_obj) => {
   return new Promise(async (resolve, reject) => {
-    if (!depth_global_obj.isSourceLogCreated) {
-      depth_obj.SOURCEID = depth_global_obj.sourceid;
-      depth_obj.log_data = "source_depth_data";
-      depth_obj.log = "depth";
-      depth_obj.count = count + 1;
+    if (!sec_time_global_obj.isSourceLogCreated) {
+      sec_time_obj.SOURCEID = sec_time_global_obj.sourceid;
+      sec_time_obj.log_data = "source_sec_data";
+      sec_time_obj.log = "second";
+      sec_time_obj.count = count + 1;
       const source_log_obj = await helper.creatingSourceLogData(
-        depth_obj,
+        sec_time_obj,
         constant.SOURCE_PARAMETER
       );
       const new_source_log = await db["source_log"].create(source_log_obj);
-      depth_global_obj.source_log_id = new_source_log._id.toString();
-      depth_global_obj.isSourceLogCreated = true;
+      sec_time_global_obj.source_log_id = new_source_log._id.toString();
+      sec_time_global_obj.isSourceLogCreated = true;
     }
 
-    // Updating the end time and end depth in source_log
-    else if (depth_global_obj.isSourceLogCreated) {
+    // Updating the end time and end time in source_log
+    else if (sec_time_global_obj.isSourceLogCreated) {
       const source_log_obj = {
-        end_time: depth_obj.TIMESTAMP,
-        end_depth: depth_obj.DMEA,
-        laststatusupdate: depth_obj.TIMESTAMP,
+        end_time: sec_time_obj.TIMESTAMP,
+        end_depth: sec_time_obj.DMEA,
+        laststatusupdate: sec_time_obj.TIMESTAMP,
         count: count + 1,
       };
       const source_log_update = await db["source_log"].updateOne(
-        { _id: depth_global_obj.source_log_id },
+        { _id: sec_time_global_obj.source_log_id },
         source_log_obj
       );
     }
@@ -165,8 +165,8 @@ const createDepthSourceLog = (count, depth_obj) => {
 /* ****************************************************** End Depth file *********************************************** */
 
 const createSourceParam = (file_header) => {
-  if (!depth_global_obj.isParameterCreated) {
-    console.log("Creating the source paramater document depth");
+  if (!sec_time_global_obj.isParameterCreated) {
+    console.log("Creating the source paramater document time");
     let all_parameter = [];
     for (let index = 0; index < file_header.length; index++) {
       const parameter_obj = {};
@@ -184,7 +184,7 @@ const createSourceParam = (file_header) => {
         : null;
       parameter_obj.type = "java.util.String";
       if (element == "TIMESTAMP") {
-        parameter_obj.type = "java.util.Date";
+        all_parameter.type = "java.util.Date";
       }
       parameter_obj.std_unit = constant.UNIT[element]
         ? constant.UNIT[element]
@@ -193,15 +193,15 @@ const createSourceParam = (file_header) => {
         ? constant.DESCRIPTION[element]
         : null;
       parameter_obj.source = null;
-      parameter_obj.sourceid = depth_global_obj.sourceid;
+      parameter_obj.sourceid = sec_time_global_obj.sourceid;
       all_parameter.push(parameter_obj);
     }
     const source_parameter = db["source_parameter"].insertMany(all_parameter);
-    depth_global_obj.isParameterCreated = true;
+    sec_time_global_obj.isParameterCreated = true;
   }
 };
 
 // Exporting the required controller
 module.exports = {
-  initializeDepth: initializeDepth,
+  initializeSecTime: initializeSecTime,
 };

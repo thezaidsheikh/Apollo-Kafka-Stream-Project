@@ -104,6 +104,11 @@ const creatingSourceLogData = (record, file_header) => {
     sourceLogObj.end_depth = record.DMEA;
     sourceLogObj.log = record.log;
     sourceLogObj.count = record.count;
+    sourceLogObj.WellTimeZone = "-06.00";
+    sourceLogObj.secondsdataavailability = false;
+    if (record.log == "second") {
+      sourceLogObj.secondsdataavailability = true;
+    }
     sourceLogObj.laststatusupdate = new Date().toISOString();
     sourceLogObj.log_data = record.log_data;
     sourceLogObj.stdMnemonicsData = file_header.map((header) => {

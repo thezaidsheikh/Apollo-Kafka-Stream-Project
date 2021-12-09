@@ -1,23 +1,23 @@
-const { Kafka,logLevel } = require("kafkajs");
+const { Kafka, logLevel } = require("kafkajs");
 const kafka = new Kafka({
-  brokers: ["10.10.30.102:9092"],
+  brokers: ["localhost:9092"],
 });
 const producer = kafka.producer();
 
-const run = async (type,record) => {
+const run = async (type, record) => {
   // Producing
   console.log("running kafka =============+>");
   await producer.connect();
   switch (type) {
     case "time":
       await producer.send({
-        topic: "13220-13220-d_time",
+        topic: "time-topic",
         messages: [{ value: record }],
       });
       break;
     case "depth":
       await producer.send({
-        topic: "13220-13220-d_depth",
+        topic: "depth-topic",
         messages: [{ value: record }],
       });
       break;
@@ -27,5 +27,5 @@ const run = async (type,record) => {
 };
 
 module.exports = {
-  run:run
-}
+  run: run,
+};
