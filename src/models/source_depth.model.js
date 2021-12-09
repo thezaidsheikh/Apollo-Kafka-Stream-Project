@@ -18,4 +18,8 @@ const source_depth_data = new Schema({
   },
 });
 
-module.exports = mongoose.model("source_depth_data", source_depth_data);
+module.exports = mongoose.model(
+  "source_depth_data",
+  source_depth_data,
+  "source_depth_data"
+);

@@ -33,4 +33,8 @@ const source_parameter = new Schema({
   },
 });
 
-module.exports = mongoose.model("source_parameter", source_parameter);
+module.exports = mongoose.model(
+  "source_parameter",
+  source_parameter,
+  "source_parameter"
+);

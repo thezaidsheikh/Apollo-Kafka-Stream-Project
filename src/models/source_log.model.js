@@ -52,10 +52,10 @@ const source_log = new Schema({
   well_name: {
     type: String,
   },
-  WellTimeZone:{
+  WellTimeZone: {
     type: String,
   },
   stdMnemonicsData: [{}],
 });
 
-module.exports = mongoose.model("source_log", source_log);
+module.exports = mongoose.model("source_log", source_log, "source_log");

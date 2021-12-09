@@ -27,4 +27,8 @@ const source_sec_time_data = new Schema({
   },
 });
 
-module.exports = mongoose.model("source_sec_time_data", source_sec_time_data);
+module.exports = mongoose.model(
+  "source_sec_time_data",
+  source_sec_time_data,
+  "source_sec_time_data"
+);
