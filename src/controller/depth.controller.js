@@ -117,13 +117,10 @@ const saveSourceDepthData = (count, depth_obj) => {
   try {
     let source_depth_data = {};
     source_depth_data.depth = count + 1;
-    // source_depth_data.depth = depth_global_obj.depth_number;
     source_depth_data.id = count + 1;
-    // source_depth_data.id = depth_global_obj.depth_number;
     source_depth_data.sourceid = depth_global_obj.sourceid;
     source_depth_data.sourcedata = depth_obj;
     db["source_depth"].create(source_depth_data);
-    // depth_global_obj.depth_number++;
   } catch (error) {
     console.log("error in saving the source depth ========>", error);
   }

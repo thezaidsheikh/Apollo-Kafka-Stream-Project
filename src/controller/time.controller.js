@@ -117,11 +117,9 @@ const saveSourceTimeData = (count, time_obj) => {
     source_time_data.month = new Date(time_obj.TIMESTAMP).getMonth() + 1;
     source_time_data.year = new Date(time_obj.TIMESTAMP).getFullYear();
     source_time_data.id = count + 1;
-    // source_time_data.id = time_global_obj.time_number;
     source_time_data.sourceid = time_global_obj.sourceid;
     source_time_data.sourcedata = time_obj;
     db["source_time"].create(source_time_data);
-    // time_global_obj.time_number++;
   } catch (error) {
     console.log("error in saving the source time ========>", error);
   }

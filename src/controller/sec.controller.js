@@ -119,11 +119,9 @@ const saveSourceSecTimeData = (count, sec_time_obj) => {
     source_time_data.month = new Date(sec_time_obj.TIMESTAMP).getMonth() + 1;
     source_time_data.year = new Date(sec_time_obj.TIMESTAMP).getFullYear();
     source_time_data.id = count + 1;
-    // source_time_data.id = sec_time_global_obj.sec_time_number;
     source_time_data.sourceid = sec_time_global_obj.sourceid;
     source_time_data.sourcedata = sec_time_obj;
     db["source_sec"].create(source_time_data);
-    // sec_time_global_obj.sec_time_number++;
   } catch (error) {
     console.log("error in saving the source time ========>", error);
   }
